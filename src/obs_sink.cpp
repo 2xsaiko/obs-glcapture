@@ -32,7 +32,7 @@ void OBSSink::ReadVideoFrame(unsigned int width, unsigned int height, const uint
     auto* fd = new FrameData(width, height, new_data);
     push_frame(fd);
 
-    next_frame = timestamp + fps * 1000000000; // microseconds
+    next_frame = timestamp + 1000000000 / fps; // microseconds
 }
 
 int64_t OBSSink::GetNextVideoTimestamp() {
