@@ -82,8 +82,8 @@ static void gl_render(void* data_in, gs_effect_t* effect) {
 
         if (!data->active_texture) {
             // format will always be AV_PIX_FMT_BGRA (see GLInjectInput.cpp)
-            gs_texture_t* pTexture = gs_texture_create(frame->get_width(), frame->get_height(), gs_color_format::GS_BGRA, 1, nullptr, GS_DYNAMIC);
-            printf("creating texture: gs_texture_create(%d, %d, %d, %d, %p, %d) = %p\n", frame->get_width(), frame->get_height(), gs_color_format::GS_BGRA, 1, nullptr, GS_DYNAMIC, pTexture);
+            gs_texture_t* pTexture = gs_texture_create(frame->get_width(), frame->get_height(), gs_color_format::GS_BGRX, 1, nullptr, GS_DYNAMIC);
+            printf("creating texture: gs_texture_create(%d, %d, %d, %d, %p, %d) = %p\n", frame->get_width(), frame->get_height(), gs_color_format::GS_BGRX, 1, nullptr, GS_DYNAMIC, pTexture);
             data->active_texture = pTexture;
         }
 
