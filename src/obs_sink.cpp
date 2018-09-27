@@ -5,7 +5,7 @@
 OBSSink::OBSSink(uint32_t fps) {
     this->fps = fps;
     next_frame = SINK_TIMESTAMP_ASAP;
-    buffer = new RingBuffer(8);
+    buffer = new RingBuffer(4);
 }
 
 OBSSink::~OBSSink() {
@@ -23,8 +23,6 @@ void OBSSink::ReadVideoFrame(unsigned int width, unsigned int height, const uint
         int destoffset = y * width * 4;
         int srcoffset = stride * y;
         for (int x = 0; x < width * 4; ++x) {
-            if (x == 0 || x == width * 4 - 1) {
-            }
             new_data[x + destoffset] = data[x + srcoffset];
         }
     }
