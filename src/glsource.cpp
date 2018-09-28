@@ -56,7 +56,7 @@ static void gl_update(void* data_in, obs_data_t* settings) {
 
     data->channel = obs_data_get_string(settings, "channel");
     data->relax_permissions = obs_data_get_bool(settings, "relax_permissions");
-    data->command = obs_data_get_string(settings, "command");
+    data->command = obs_data_get_string(settings, "command_line");
 
     data->vid->set_channel(obs_data_get_string(settings, "channel"));
     data->vid->set_relax_permissions(data->relax_permissions);
@@ -87,9 +87,8 @@ static obs_properties_t* gl_get_properties(void* data_in) {
     obs_properties_add_bool(props, "limit_fps", obs_module_text("LimitFPS"));
     obs_properties_add_int(props, "fps", obs_module_text("FPS"), 1, 200, 1);
 
-    // TODO: start program button added this way doesn't do jack shit, need to debug
-    // obs_properties_add_text(props, "command_line", obs_module_text("CommandLine"), OBS_TEXT_DEFAULT);
-    // obs_properties_add_button(props, "start_program", obs_module_text("StartProgram"), start_program_button_clicked);
+    obs_properties_add_text(props, "command_line", obs_module_text("CommandLine"), OBS_TEXT_DEFAULT);
+    obs_properties_add_button(props, "start_program", obs_module_text("StartProgram"), start_program_button_clicked);
 
     return props;
 }
