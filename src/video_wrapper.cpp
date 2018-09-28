@@ -102,7 +102,7 @@ void VideoWrapper::reset(bool force) {
 }
 
 void VideoWrapper::deinit() {
-    printf("deinit VideoWrapper\n");
+    blog(LOG_DEBUG, "VideoWrapper::deinit()");
 
     if (sink) {
         sink->ConnectVideoSource(nullptr);
@@ -117,7 +117,8 @@ void VideoWrapper::deinit() {
 }
 
 void VideoWrapper::init() {
-    printf("init VideoWrapper\n");
+    blog(LOG_DEBUG, "VideoWrapper::init()");
+
     sink = new OBSSink(fps);
     source = new GLInjectInput(channel, relax_permissions, record_cursor, limit_fps, fps);
 

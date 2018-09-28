@@ -9,14 +9,13 @@ RingBuffer::RingBuffer(uint32_t size) {
 
 RingBuffer::~RingBuffer() {
     FrameData* data;
-    while (data = pop()) {
+    while ((data = pop())) {
         delete data;
     }
 }
 
 void RingBuffer::push(FrameData* ptr) {
     if (full()) {
-        // printf("Buffer overflow\n");
         delete ptr;
         return;
     };

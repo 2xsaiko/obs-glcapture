@@ -1,6 +1,6 @@
 #include "glsource.h"
 
-#include <obs/obs-module.h>
+#include "common.h"
 #include <pthread.h>
 
 struct obs_source_info glsource = {
@@ -110,11 +110,10 @@ static void gl_render(void* data_in, gs_effect_t* effect) {
 
     if (frame) {
         if (data->active_texture) {
-
             uint32_t tex_width = gs_texture_get_width(data->active_texture);
             uint32_t tex_height = gs_texture_get_height(data->active_texture);
             if (tex_width != frame->get_width() || tex_height != frame->get_height()) {
-                printf("%s\n", "destroying texture");
+                blog(LOG_DEBUG, "Window size changed from %dx%d to %dx%d, destroying texture", tex_width, tex_height, frame->get_width(), frame->get_height());
                 gs_texture_destroy(data->active_texture);
                 data->active_texture = nullptr;
             }
@@ -123,7 +122,7 @@ static void gl_render(void* data_in, gs_effect_t* effect) {
         if (!data->active_texture) {
             // format will always be AV_PIX_FMT_BGRA (see GLInjectInput.cpp)
             gs_texture_t* pTexture = gs_texture_create(frame->get_width(), frame->get_height(), gs_color_format::GS_BGRX, 1, nullptr, GS_DYNAMIC);
-            printf("creating texture: gs_texture_create(%d, %d, %d, %d, %p, %d) = %p\n", frame->get_width(), frame->get_height(), gs_color_format::GS_BGRX, 1, nullptr, GS_DYNAMIC, pTexture);
+            blog(LOG_DEBUG, "Creating %dx%d texture = %p", frame->get_width(), frame->get_height(), pTexture);
             data->active_texture = pTexture;
         }
 

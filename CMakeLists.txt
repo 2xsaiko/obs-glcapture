@@ -11,7 +11,6 @@ add_library(obs-glcapture MODULE
         src/ssr/AVWrapper.cpp src/ssr/AVWrapper.h
         src/ssr/GLInjectInput.cpp src/ssr/GLInjectInput.h
         src/ssr/Global.h
-        src/ssr/Logger.cpp src/ssr/Logger.h
         src/ssr/MutexDataPair.h
         src/ssr/ShmStructs.h
         src/ssr/SourceSink.cpp src/ssr/SourceSink.h
@@ -21,6 +20,7 @@ add_library(obs-glcapture MODULE
         src/obs_sink.cpp src/obs_sink.h
         src/video_wrapper.cpp src/video_wrapper.h
         src/frame_data.cpp src/frame_data.h
-        src/ring_buffer.cpp src/ring_buffer.h)
+        src/ring_buffer.cpp src/ring_buffer.h
+        src/common.h)
 
 target_link_libraries(obs-glcapture obs Qt5::Core)

@@ -1,8 +1,7 @@
+#include "common.h"
 #include "ssr/GLInjectInput.h"
 #include "obs_sink.h"
 #include "video_wrapper.h"
-
-#include <obs/obs-module.h>
 
 #pragma once
 

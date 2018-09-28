@@ -1,6 +1,6 @@
+#include "common.h"
 #include "obs_sink.h"
 #include "glsource.h"
-#include <obs/graphics/graphics.h>
 
 OBSSink::OBSSink(uint32_t fps) {
     this->fps = fps;

@@ -1,10 +1,10 @@
 #pragma once
 
+#include "common.h"
 #include "ssr/SourceSink.h"
 #include "frame_data.h"
 #include "ring_buffer.h"
 
-#include <obs/graphics/graphics.h>
 #include <queue>
 
 class OBSSink : public VideoSink {
