@@ -33,7 +33,7 @@ FrameData* RingBuffer::pop() {
 uint32_t RingBuffer::length() {
     int32_t i = head - tail;
     if (i < 0) return i + size;
-    else return i;
+    else return static_cast<uint32_t>(i);
 }
 
 bool RingBuffer::empty() {

@@ -12,12 +12,17 @@ private:
 
 public:
     void push(FrameData* ptr);
+
     FrameData* pop();
+
     uint32_t length();
+
     bool empty();
+
     bool full();
 
 public:
     explicit RingBuffer(uint32_t size);
+
     ~RingBuffer();
 };

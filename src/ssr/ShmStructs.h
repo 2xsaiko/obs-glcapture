@@ -37,28 +37,28 @@ There are two types of files:
 
 struct GLInjectHeader {
 
-	// identifier
-	uint32_t identifier;
+    // identifier
+    uint32_t identifier;
 
-	// ring buffer
-	uint32_t ring_buffer_read_pos, ring_buffer_write_pos;
+    // ring buffer
+    uint32_t ring_buffer_read_pos, ring_buffer_write_pos;
 
-	// video stream info: set by the captured application
-	uint32_t current_width, current_height;
-	uint32_t frame_counter;
+    // video stream info: set by the captured application
+    uint32_t current_width, current_height;
+    uint32_t frame_counter;
 
-	// capture parameters: set by SimpleScreenRecorder
-	uint32_t capture_flags;
-	uint32_t capture_target_fps;
+    // capture parameters: set by SimpleScreenRecorder
+    uint32_t capture_flags;
+    uint32_t capture_target_fps;
 
 };
 
 struct GLInjectFrameInfo {
 
-	// frame info: set by the captured application
-	int64_t timestamp;
-	uint32_t width, height;
-	int32_t stride; // stride can be negative, this means the frame is upside-down (this is typical for OpenGL)
+    // frame info: set by the captured application
+    int64_t timestamp;
+    uint32_t width, height;
+    int32_t stride; // stride can be negative, this means the frame is upside-down (this is typical for OpenGL)
 
 };
 

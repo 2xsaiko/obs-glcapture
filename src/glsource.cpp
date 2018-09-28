@@ -109,11 +109,14 @@ static void gl_render(void* data_in, gs_effect_t* effect) {
     FrameData* frame = data->vid->get_next_frame();
 
     if (frame) {
+        uint32_t width = frame->get_width();
+        uint32_t height = frame->get_height();
+
         if (data->active_texture) {
             uint32_t tex_width = gs_texture_get_width(data->active_texture);
             uint32_t tex_height = gs_texture_get_height(data->active_texture);
-            if (tex_width != frame->get_width() || tex_height != frame->get_height()) {
-                blog(LOG_DEBUG, "Window size changed from %dx%d to %dx%d, destroying texture", tex_width, tex_height, frame->get_width(), frame->get_height());
+            if (tex_width != width || tex_height != height) {
+                blog(LOG_DEBUG, "Window size changed from %dx%d to %dx%d, destroying texture", tex_width, tex_height, width, height);
                 gs_texture_destroy(data->active_texture);
                 data->active_texture = nullptr;
             }
@@ -121,13 +124,12 @@ static void gl_render(void* data_in, gs_effect_t* effect) {
 
         if (!data->active_texture) {
             // format will always be AV_PIX_FMT_BGRA (see GLInjectInput.cpp)
-            gs_texture_t* pTexture = gs_texture_create(frame->get_width(), frame->get_height(), gs_color_format::GS_BGRX, 1, nullptr, GS_DYNAMIC);
-            blog(LOG_DEBUG, "Creating %dx%d texture = %p", frame->get_width(), frame->get_height(), pTexture);
+            gs_texture_t* pTexture = gs_texture_create(width, height, gs_color_format::GS_BGRX, 1, nullptr, GS_DYNAMIC);
+            blog(LOG_DEBUG, "Creating %dx%d texture = %p", width, height, pTexture);
             data->active_texture = pTexture;
         }
 
         gs_texture_set_image(data->active_texture, frame->get_color_data(), frame->get_width() * 4, false);
-
     }
     delete frame;
 
@@ -158,7 +160,7 @@ static void gl_hide(void* data_in) {
 static bool start_program_button_clicked(obs_properties_t* props, obs_property_t* property, void* data_in) {
     auto* data = (gl_data*) data_in;
 
-    printf("GLInjectInput::LaunchApplication(%s, %d, %s, %s)", data->channel, data->relax_permissions, data->command, ".");
+    blog(LOG_DEBUG, "GLInjectInput::LaunchApplication(%s, %d, %s, %s)", data->channel, data->relax_permissions, data->command, ".");
 
     GLInjectInput::LaunchApplication(data->channel, data->relax_permissions, data->command, ".");
 

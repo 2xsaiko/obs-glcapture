@@ -155,7 +155,7 @@ extern "C" {
 #define atomic_thread_fence atomic_thread_fence_replacement
 namespace std {
 inline void atomic_thread_fence_replacement(memory_order) {
-	__sync_synchronize();
+    __sync_synchronize();
 }
 }
 #endif
@@ -251,122 +251,132 @@ inline void atomic_thread_fence_replacement(memory_order) {
 // exception thrown when errors occur in external libraries
 class LibavException : public std::exception {
 public:
-	inline virtual const char* what() const throw() override {
-		return "LibavException";
-	}
+    inline virtual const char* what() const throw() override {
+        return "LibavException";
+    }
 };
+
 class ResamplerException : public std::exception {
 public:
-	inline virtual const char* what() const throw() override {
-		return "ResamplerException";
-	}
+    inline virtual const char* what() const throw() override {
+        return "ResamplerException";
+    }
 };
+
 class X11Exception : public std::exception {
 public:
-	inline virtual const char* what() const throw() override {
-		return "X11Exception";
-	}
+    inline virtual const char* what() const throw() override {
+        return "X11Exception";
+    }
 };
+
 class GLInjectException : public std::exception {
 public:
-	inline virtual const char* what() const throw() override {
-		return "GLInjectException";
-	}
+    inline virtual const char* what() const throw() override {
+        return "GLInjectException";
+    }
 };
+
 class SSRStreamException : public std::exception {
 public:
-	inline virtual const char* what() const throw() override {
-		return "SSRStreamException";
-	}
+    inline virtual const char* what() const throw() override {
+        return "SSRStreamException";
+    }
 };
+
 #if SSR_USE_ALSA
 class ALSAException : public std::exception {
 public:
-	inline virtual const char* what() const throw() override {
-		return "ALSAException";
-	}
+    inline virtual const char* what() const throw() override {
+        return "ALSAException";
+    }
 };
 #endif
 #if SSR_USE_PULSEAUDIO
 class PulseAudioException : public std::exception {
 public:
-	inline virtual const char* what() const throw() override {
-		return "PulseAudioException";
-	}
+    inline virtual const char* what() const throw() override {
+        return "PulseAudioException";
+    }
 };
 #endif
 #if SSR_USE_JACK
 class JACKException : public std::exception {
 public:
-	inline virtual const char* what() const throw() override {
-		return "JACKException";
-	}
+    inline virtual const char* what() const throw() override {
+        return "JACKException";
+    }
 };
 #endif
 
 // simple function to do 16-byte alignment
 inline size_t grow_align16(size_t size) {
-	return (size_t) (size + 15) & ~((size_t) 15);
+    return (size_t) (size + 15) & ~((size_t) 15);
 }
 
 // high resolution timer
 inline int64_t hrt_time_micro() {
-	timespec ts;
-	clock_gettime(CLOCK_MONOTONIC, &ts);
-	return (uint64_t) ts.tv_sec * (uint64_t) 1000000 + (uint64_t) (ts.tv_nsec / 1000);
+    timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return (uint64_t) ts.tv_sec * (uint64_t) 1000000 + (uint64_t) (ts.tv_nsec / 1000);
 }
 
 // Returns the name of the user.
 inline std::string GetUserName() {
-	std::vector<char> buf(std::max((long) 16384, sysconf(_SC_GETPW_R_SIZE_MAX)));
-	passwd pwd, *result = NULL;
-	if(getpwuid_r(geteuid(), &pwd, buf.data(), buf.size(), &result) == 0 && result != NULL)
-		return std::string(result->pw_name);
-	return "unknownuser";
+    std::vector<char> buf(std::max((long) 16384, sysconf(_SC_GETPW_R_SIZE_MAX)));
+    passwd pwd, * result = NULL;
+    if (getpwuid_r(geteuid(), &pwd, buf.data(), buf.size(), &result) == 0 && result != NULL)
+        return std::string(result->pw_name);
+    return "unknownuser";
 }
 
 template<typename T>
 inline T positive_mod(T x, T y) {
-	T z = x % y;
-	return (z < 0)? z + y : z;
+    T z = x % y;
+    return (z < 0) ? z + y : z;
 }
 
 template<typename T>
 inline T clamp(T v, T lo, T hi) {
-	assert(lo <= hi);
-	if(v < lo)
-		return lo;
-	if(v > hi)
-		return hi;
-	return v;
+    assert(lo <= hi);
+    if (v < lo)
+        return lo;
+    if (v > hi)
+        return hi;
+    return v;
 }
-template<> inline float clamp<float>(float v, float lo, float hi) {
-	assert(lo <= hi);
-	return fmin(fmax(v, lo), hi);
+
+template<>
+inline float clamp<float>(float v, float lo, float hi) {
+    assert(lo <= hi);
+    return fmin(fmax(v, lo), hi);
 }
-template<> inline double clamp<double>(double v, double lo, double hi) {
-	assert(lo <= hi);
-	return fmin(fmax(v, lo), hi);
+
+template<>
+inline double clamp<double>(double v, double lo, double hi) {
+    assert(lo <= hi);
+    return fmin(fmax(v, lo), hi);
 }
 
 // Generic number-to-string conversion and vice versa
 // Unlike the standard functions, these are locale-independent, and the functions never throw exceptions.
 template<typename T>
 inline std::string NumToString(T number) {
-	std::ostringstream ss;
-	ss << number;
-	return ss.str();
+    std::ostringstream ss;
+    ss << number;
+    return ss.str();
 }
+
 template<typename T>
 inline bool StringToNum(const std::string& str, T* number) {
-	std::istringstream ss(str);
-	ss >> *number;
-	return !ss.fail();
+    std::istringstream ss(str);
+    ss >> *number;
+    return !ss.fail();
 }
 
 // convert weird types from libav/ffmpeg to doubles
 inline double ToDouble(const AVRational& r) {
-	return (double) r.num / (double) r.den;
+    return (double) r.num / (double) r.den;
 }
 
 //inline void GroupEnabled(std::initializer_list<QAction*> actions, bool enabled) {

@@ -18,6 +18,7 @@ along with SimpleScreenRecorder.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #pragma once
+
 #include "Global.h"
 
 #include "SSRVideoStream.h"
@@ -27,62 +28,65 @@ along with SimpleScreenRecorder.  If not, see <http://www.gnu.org/licenses/>.
 class SSRVideoStreamReader {
 
 private:
-	struct FrameData {
-		std::string m_filename_frame;
-		int m_fd_frame;
-		void *m_mmap_ptr_frame;
-		size_t m_mmap_size_frame;
-	};
+    struct FrameData {
+        std::string m_filename_frame;
+        int m_fd_frame;
+        void* m_mmap_ptr_frame;
+        size_t m_mmap_size_frame;
+    };
 
 private:
-	SSRVideoStream m_stream;
-	std::string m_channel_directory, m_filename_main;
-	size_t m_page_size;
+    SSRVideoStream m_stream;
+    std::string m_channel_directory, m_filename_main;
+    size_t m_page_size;
 
-	int64_t m_fps_last_timestamp;
-	uint32_t m_fps_last_counter;
-	double m_fps_current;
+    int64_t m_fps_last_timestamp;
+    uint32_t m_fps_last_counter;
+    double m_fps_current;
 
-	int m_fd_main, m_file_lock;
-	void *m_mmap_ptr_main;
-	size_t m_mmap_size_main;
+    int m_fd_main, m_file_lock;
+    void* m_mmap_ptr_main;
+    size_t m_mmap_size_main;
 
-	FrameData m_frame_data[GLINJECT_RING_BUFFER_SIZE];
+    FrameData m_frame_data[GLINJECT_RING_BUFFER_SIZE];
 
 public:
-	SSRVideoStreamReader(const std::string& channel, const SSRVideoStream& stream);
-	~SSRVideoStreamReader();
+    SSRVideoStreamReader(const std::string& channel, const SSRVideoStream& stream);
+
+    ~SSRVideoStreamReader();
 
 private:
-	void Init();
-	void Free();
+    void Init();
+
+    void Free();
 
 public:
-	// Reads the current size of the stream. If the stream hasn't been started yet, this will be 0x0.
-	void GetCurrentSize(unsigned int* width, unsigned int* height);
+    // Reads the current size of the stream. If the stream hasn't been started yet, this will be 0x0.
+    void GetCurrentSize(unsigned int* width, unsigned int* height);
 
-	// Returns the current fps.
-	double GetFPS();
+    // Returns the current fps.
+    double GetFPS();
 
-	// Changes the capture parameters.
-	void ChangeCaptureParameters(unsigned int flags, unsigned int target_fps);
+    // Changes the capture parameters.
+    void ChangeCaptureParameters(unsigned int flags, unsigned int target_fps);
 
-	// Clears the ring buffer (i.e. drops all frames).
-	void Clear();
+    // Clears the ring buffer (i.e. drops all frames).
+    void Clear();
 
-	// Checks whether a new frame is available, and returns a pointer to the frame memory if it is. Otherwise it returns NULL.
-	void* GetFrame(int64_t* timestamp, unsigned int* width, unsigned int* height, int* stride);
+    // Checks whether a new frame is available, and returns a pointer to the frame memory if it is. Otherwise it returns NULL.
+    void* GetFrame(int64_t* timestamp, unsigned int* width, unsigned int* height, int* stride);
 
-	// Drops the current frame and goes to the next frame.
-	void NextFrame();
+    // Drops the current frame and goes to the next frame.
+    void NextFrame();
 
 public:
 
-	// Returns the stream that is being read.
-	inline const SSRVideoStream& GetStream() { return m_stream; }
+    // Returns the stream that is being read.
+    inline const SSRVideoStream& GetStream() { return m_stream; }
 
 private:
-	inline GLInjectHeader* GetGLInjectHeader() { return (GLInjectHeader*) m_mmap_ptr_main; }
-	inline GLInjectFrameInfo* GetGLInjectFrameInfo(unsigned int frame) { return (GLInjectFrameInfo*) ((char*) m_mmap_ptr_main + sizeof(GLInjectHeader) + frame * sizeof(GLInjectFrameInfo)); }
+    inline GLInjectHeader* GetGLInjectHeader() { return (GLInjectHeader*) m_mmap_ptr_main; }
+
+    inline GLInjectFrameInfo* GetGLInjectFrameInfo(unsigned int frame) { return (GLInjectFrameInfo*) ((char*) m_mmap_ptr_main + sizeof(GLInjectHeader) + frame * sizeof(GLInjectFrameInfo)); }
 
 };

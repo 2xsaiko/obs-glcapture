@@ -18,6 +18,7 @@ along with SimpleScreenRecorder.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #pragma once
+
 #include "Global.h"
 
 #include "SSRVideoStream.h"
@@ -27,30 +28,33 @@ along with SimpleScreenRecorder.  If not, see <http://www.gnu.org/licenses/>.
 class SSRVideoStreamWatcher {
 
 public:
-	typedef void (*AddCallback)(const SSRVideoStream&, void*);
-	typedef void (*RemoveCallback)(const SSRVideoStream&, size_t, void*);
+    typedef void (* AddCallback)(const SSRVideoStream&, void*);
+
+    typedef void (* RemoveCallback)(const SSRVideoStream&, size_t, void*);
 
 private:
-	std::string m_channel_directory;
-	bool m_relax_permissions;
+    std::string m_channel_directory;
+    bool m_relax_permissions;
 
-	int m_fd_notify;
+    int m_fd_notify;
 
-	std::vector<SSRVideoStream> m_streams;
+    std::vector<SSRVideoStream> m_streams;
 
 public:
-	SSRVideoStreamWatcher(const std::string& channel, bool relax_permissions);
-	~SSRVideoStreamWatcher();
+    SSRVideoStreamWatcher(const std::string& channel, bool relax_permissions);
+
+    ~SSRVideoStreamWatcher();
 
 private:
-	void Init();
-	void Free();
+    void Init();
+
+    void Free();
 
 public:
-	// Handles all changes since the last call to this function.
-	void HandleChanges(AddCallback add_callback, RemoveCallback remove_callback, void* userdata);
+    // Handles all changes since the last call to this function.
+    void HandleChanges(AddCallback add_callback, RemoveCallback remove_callback, void* userdata);
 
-	// Returns a list of streams that are currently active.
-	inline const std::vector<SSRVideoStream>& GetStreams() { return m_streams; }
+    // Returns a list of streams that are currently active.
+    inline const std::vector<SSRVideoStream>& GetStreams() { return m_streams; }
 
 };

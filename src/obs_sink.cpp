@@ -15,7 +15,6 @@ OBSSink::~OBSSink() {
 };
 
 void OBSSink::ReadVideoFrame(unsigned int width, unsigned int height, const uint8_t* data, int stride, AVPixelFormat format, int64_t timestamp) {
-
     if (buffer->full()) return;
 
     auto* new_data = new uint8_t[width * height * 4];

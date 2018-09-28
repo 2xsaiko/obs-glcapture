@@ -44,6 +44,7 @@ public:
 
 private:
     void deinit();
+
     void init();
 
 public:

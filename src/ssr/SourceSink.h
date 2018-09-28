@@ -32,77 +32,101 @@ along with SimpleScreenRecorder.  If not, see <http://www.gnu.org/licenses/>.
 #define SINK_TIMESTAMP_ASAP  ((int64_t) 0x8000000000000001ull)  // the sink wants a new frame as soon as possible
 
 class BaseSource;
+
 class BaseSink;
 
 class BaseSource {
 public:
-	struct SinkData {
-		BaseSink *sink;
-		int priority;
-		inline SinkData() {}
-		inline SinkData(BaseSink *sink, int priority) : sink(sink), priority(priority) {}
-		inline bool operator<(const SinkData& other) const {
-			return (priority > other.priority); // sort in reverse order (high priority first)
-		}
-	};
-	struct SharedData {
-		std::vector<SinkData> m_sinks;
-	};
-	typedef MutexDataPair<SharedData>::Lock SharedLock;
+    struct SinkData {
+        BaseSink* sink;
+        int priority;
+
+        inline SinkData() {}
+
+        inline SinkData(BaseSink* sink, int priority) : sink(sink), priority(priority) {}
+
+        inline bool operator<(const SinkData& other) const {
+            return (priority > other.priority); // sort in reverse order (high priority first)
+        }
+    };
+
+    struct SharedData {
+        std::vector<SinkData> m_sinks;
+    };
+    typedef MutexDataPair<SharedData>::Lock SharedLock;
 public:
-	MutexDataPair<SharedData> m_shared_data;
+    MutexDataPair<SharedData> m_shared_data;
 public:
-	BaseSource();
-	virtual ~BaseSource();
+    BaseSource();
+
+    virtual ~BaseSource();
 };
 
 class BaseSink {
 public:
-	// variables are not protected by a lock because they should only be read when connections change
-	BaseSource *m_source;
-	int m_priority;
+    // variables are not protected by a lock because they should only be read when connections change
+    BaseSource* m_source;
+    int m_priority;
 public:
-	BaseSink();
-	virtual ~BaseSink();
-	void ConnectBaseSource(BaseSource* source, int priority);
+    BaseSink();
+
+    virtual ~BaseSink();
+
+    void ConnectBaseSource(BaseSource* source, int priority);
 };
 
 class VideoSource : private BaseSource {
-	friend class VideoSink;
+    friend class VideoSink;
+
 protected:
-	VideoSource() {}
-	int64_t CalculateNextVideoTimestamp();
-	void PushVideoFrame(unsigned int width, unsigned int height, const uint8_t* data, int stride, AVPixelFormat format, int64_t timestamp);
-	void PushVideoPing(int64_t timestamp);
+    VideoSource() {}
+
+    int64_t CalculateNextVideoTimestamp();
+
+    void PushVideoFrame(unsigned int width, unsigned int height, const uint8_t* data, int stride, AVPixelFormat format, int64_t timestamp);
+
+    void PushVideoPing(int64_t timestamp);
 };
 
 class VideoSink : private BaseSink {
-	friend class VideoSource;
+    friend class VideoSource;
+
 protected:
-	VideoSink() {}
+    VideoSink() {}
+
 public:
-	inline void ConnectVideoSource(VideoSource* source, int priority = 0) { ConnectBaseSource(source, priority); }
+    inline void ConnectVideoSource(VideoSource* source, int priority = 0) { ConnectBaseSource(source, priority); }
+
 public:
-	virtual int64_t GetNextVideoTimestamp() { return SINK_TIMESTAMP_NONE; }
-	virtual void ReadVideoFrame(unsigned int width, unsigned int height, const uint8_t* data, int stride, AVPixelFormat format, int64_t timestamp) = 0;
-	virtual void ReadVideoPing(int64_t timestamp) {}
+    virtual int64_t GetNextVideoTimestamp() { return SINK_TIMESTAMP_NONE; }
+
+    virtual void ReadVideoFrame(unsigned int width, unsigned int height, const uint8_t* data, int stride, AVPixelFormat format, int64_t timestamp) = 0;
+
+    virtual void ReadVideoPing(int64_t timestamp) {}
 };
 
 class AudioSource : private BaseSource {
-	friend class AudioSink;
+    friend class AudioSink;
+
 protected:
-	AudioSource() {}
-	void PushAudioSamples(unsigned int channels, unsigned int sample_rate, AVSampleFormat format, unsigned int sample_count, const uint8_t* data, int64_t timestamp);
-	void PushAudioHole();
+    AudioSource() {}
+
+    void PushAudioSamples(unsigned int channels, unsigned int sample_rate, AVSampleFormat format, unsigned int sample_count, const uint8_t* data, int64_t timestamp);
+
+    void PushAudioHole();
 };
 
 class AudioSink : private BaseSink {
-	friend class AudioSource;
+    friend class AudioSource;
+
 protected:
-	AudioSink() {}
+    AudioSink() {}
+
 public:
-	inline void ConnectAudioSource(AudioSource* source, int priority = 0) { ConnectBaseSource(source, priority); }
+    inline void ConnectAudioSource(AudioSource* source, int priority = 0) { ConnectBaseSource(source, priority); }
+
 public:
-	virtual void ReadAudioSamples(unsigned int channels, unsigned int sample_rate, AVSampleFormat format, unsigned int sample_count, const uint8_t* data, int64_t timestamp) = 0;
-	virtual void ReadAudioHole() {}
+    virtual void ReadAudioSamples(unsigned int channels, unsigned int sample_rate, AVSampleFormat format, unsigned int sample_count, const uint8_t* data, int64_t timestamp) = 0;
+
+    virtual void ReadAudioHole() {}
 };

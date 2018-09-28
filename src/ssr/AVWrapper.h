@@ -18,6 +18,7 @@ along with SimpleScreenRecorder.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #pragma once
+
 #include "Global.h"
 
 #if !SSR_USE_AV_CODEC_ID
@@ -56,24 +57,27 @@ along with SimpleScreenRecorder.  If not, see <http://www.gnu.org/licenses/>.
 // A trivial class that holds (aligned) frame data. This makes it easy to implement reference counting through std::shared_ptr.
 class AVFrameData {
 private:
-	uint8_t *m_data;
-	size_t m_size;
+    uint8_t* m_data;
+    size_t m_size;
 public:
-	inline AVFrameData(size_t size) {
-		m_data = (uint8_t*) av_malloc(size);
-		if(m_data == NULL)
-			throw std::bad_alloc();
-		m_size = size;
-	}
-	inline ~AVFrameData() {
-		av_free(m_data);
-	}
-	inline uint8_t* GetData() {
-		return m_data;
-	}
-	inline size_t GetSize() {
-		return m_size;
-	}
+    inline AVFrameData(size_t size) {
+        m_data = (uint8_t*) av_malloc(size);
+        if (m_data == NULL)
+            throw std::bad_alloc();
+        m_size = size;
+    }
+
+    inline ~AVFrameData() {
+        av_free(m_data);
+    }
+
+    inline uint8_t* GetData() {
+        return m_data;
+    }
+
+    inline size_t GetSize() {
+        return m_size;
+    }
 };
 
 // A wrapper around AVFrame to manage memory allocation and reference counting.
@@ -81,27 +85,31 @@ public:
 class AVFrameWrapper {
 
 private:
-	AVFrame *m_frame;
-	std::shared_ptr<AVFrameData> m_refcounted_data;
+    AVFrame* m_frame;
+    std::shared_ptr<AVFrameData> m_refcounted_data;
 
 public:
-	AVFrameWrapper(const std::shared_ptr<AVFrameData>& refcounted_data);
-	~AVFrameWrapper();
+    AVFrameWrapper(const std::shared_ptr<AVFrameData>& refcounted_data);
 
-	AVFrameWrapper(const AVFrameWrapper&) = delete;
-	AVFrameWrapper& operator=(const AVFrameWrapper&) = delete;
+    ~AVFrameWrapper();
+
+    AVFrameWrapper(const AVFrameWrapper&) = delete;
+
+    AVFrameWrapper& operator=(const AVFrameWrapper&) = delete;
 
 #if SSR_USE_AVCODEC_SEND_RECEIVE
-	// This function transfers ownership of the data to the AVFrame, and then releases ownership of the AVFrame itself.
-	// This turns the AVFrame into a stand-alone object which relies on the ffmpeg/libav reference counting mechanism to free the data.
-	// The returned frame should be freed with av_frame_free.
-	AVFrame* Release();
+    // This function transfers ownership of the data to the AVFrame, and then releases ownership of the AVFrame itself.
+    // This turns the AVFrame into a stand-alone object which relies on the ffmpeg/libav reference counting mechanism to free the data.
+    // The returned frame should be freed with av_frame_free.
+    AVFrame* Release();
 #endif
 
 public:
-	inline AVFrame* GetFrame() { return m_frame; }
-	inline uint8_t* GetRawData() { return m_refcounted_data->GetData(); }
-	inline std::shared_ptr<AVFrameData> GetFrameData() { return m_refcounted_data; }
+    inline AVFrame* GetFrame() { return m_frame; }
+
+    inline uint8_t* GetRawData() { return m_refcounted_data->GetData(); }
+
+    inline std::shared_ptr<AVFrameData> GetFrameData() { return m_refcounted_data; }
 
 };
 
@@ -109,36 +117,43 @@ public:
 class AVPacketWrapper {
 
 private:
-	AVPacket *m_packet;
+    AVPacket* m_packet;
 #if !SSR_USE_AV_PACKET_ALLOC
-	bool m_free_on_destruct;
+    bool m_free_on_destruct;
 #endif
 
 public:
-	AVPacketWrapper();
-	AVPacketWrapper(size_t size);
-	~AVPacketWrapper();
+    AVPacketWrapper();
 
-	AVPacketWrapper(const AVPacketWrapper&) = delete;
-	AVPacketWrapper& operator=(const AVPacketWrapper&) = delete;
+    AVPacketWrapper(size_t size);
+
+    ~AVPacketWrapper();
+
+    AVPacketWrapper(const AVPacketWrapper&) = delete;
+
+    AVPacketWrapper& operator=(const AVPacketWrapper&) = delete;
 
 public:
-	inline AVPacket* GetPacket() { return m_packet; }
-	inline void SetFreeOnDestruct(bool free_on_destruct) {
+    inline AVPacket* GetPacket() { return m_packet; }
+
+    inline void SetFreeOnDestruct(bool free_on_destruct) {
 #if !SSR_USE_AV_PACKET_ALLOC
-		m_free_on_destruct = free_on_destruct;
+        m_free_on_destruct = free_on_destruct;
 #endif
-	}
+    }
 
 };
 
 bool AVFormatIsInstalled(const QString& format_name);
+
 bool AVCodecIsInstalled(const QString& codec_name);
+
 bool AVCodecSupportsPixelFormat(const AVCodec* codec, AVPixelFormat pixel_fmt);
+
 bool AVCodecSupportsSampleFormat(const AVCodec* codec, AVSampleFormat sample_fmt);
 
 #if !SSR_USE_AV_CODEC_IS_ENCODER
 inline int av_codec_is_encoder(const AVCodec* codec) {
-	return (codec != NULL && (codec->encode != NULL || codec->encode2 != NULL));
+    return (codec != NULL && (codec->encode != NULL || codec->encode2 != NULL));
 }
 #endif

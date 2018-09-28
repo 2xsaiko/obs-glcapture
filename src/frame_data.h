@@ -12,7 +12,9 @@ private:
 
 public:
     uint32_t get_width();
+
     uint32_t get_height();
+
     uint8_t* get_color_data();
 
 protected:

@@ -18,16 +18,19 @@ along with SimpleScreenRecorder.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #pragma once
+
 #include "Global.h"
 
 struct SSRVideoStream {
-	std::string m_stream_name;
-	int64_t m_creation_time;
-	unsigned int m_process_id;
-	inline bool operator==(const SSRVideoStream& other) const {
-		return (m_stream_name == other.m_stream_name);
-	}
-	inline bool operator<(const SSRVideoStream& other) const {
-		return (m_creation_time < other.m_creation_time);
-	}
+    std::string m_stream_name;
+    int64_t m_creation_time;
+    unsigned int m_process_id;
+
+    inline bool operator==(const SSRVideoStream& other) const {
+        return (m_stream_name == other.m_stream_name);
+    }
+
+    inline bool operator<(const SSRVideoStream& other) const {
+        return (m_creation_time < other.m_creation_time);
+    }
 };

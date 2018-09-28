@@ -18,69 +18,75 @@ along with SimpleScreenRecorder.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #pragma once
+
 #include "Global.h"
 
 #include "SourceSink.h"
 #include "MutexDataPair.h"
 
 class SSRVideoStream;
+
 class SSRVideoStreamWatcher;
+
 class SSRVideoStreamReader;
 
 class GLInjectInput : public VideoSource {
 
 private:
-	struct SharedData {
-		bool m_capturing;
-		std::unique_ptr<SSRVideoStreamWatcher> m_stream_watcher;
-		std::unique_ptr<SSRVideoStreamReader> m_stream_reader;
-	};
-	typedef MutexDataPair<SharedData>::Lock SharedLock;
+    struct SharedData {
+        bool m_capturing;
+        std::unique_ptr<SSRVideoStreamWatcher> m_stream_watcher;
+        std::unique_ptr<SSRVideoStreamReader> m_stream_reader;
+    };
+    typedef MutexDataPair<SharedData>::Lock SharedLock;
 
 private:
-	static const int64_t MAX_COMMUNICATION_LATENCY;
+    static const int64_t MAX_COMMUNICATION_LATENCY;
 
 private:
-	QString m_channel;
-	bool m_relax_permissions;
-	unsigned int m_flags;
-	unsigned int m_target_fps;
+    QString m_channel;
+    bool m_relax_permissions;
+    unsigned int m_flags;
+    unsigned int m_target_fps;
 
-	std::thread m_thread;
-	MutexDataPair<SharedData> m_shared_data;
-	std::atomic<bool> m_should_stop, m_error_occurred;
+    std::thread m_thread;
+    MutexDataPair<SharedData> m_shared_data;
+    std::atomic<bool> m_should_stop, m_error_occurred;
 
 public:
-	GLInjectInput(const QString& channel, bool relax_permissions, bool record_cursor, bool limit_fps, unsigned int target_fps);
-	~GLInjectInput();
+    GLInjectInput(const QString& channel, bool relax_permissions, bool record_cursor, bool limit_fps, unsigned int target_fps);
 
-	// Reads the current size of the stream. If the stream hasn't been started yet, this will be 0x0.
-	// This function is thread-safe.
-	void GetCurrentSize(unsigned int* width, unsigned int* height);
+    ~GLInjectInput();
 
-	// Returns the total number of captured frames.
-	// This function is thread-safe.
-	double GetFPS();
+    // Reads the current size of the stream. If the stream hasn't been started yet, this will be 0x0.
+    // This function is thread-safe.
+    void GetCurrentSize(unsigned int* width, unsigned int* height);
 
-	// Start/stop capturing.
-	// This function is thread-safe.
-	void SetCapturing(bool capturing);
+    // Returns the total number of captured frames.
+    // This function is thread-safe.
+    double GetFPS();
 
-	// Returns whether an error has occurred in the input thread.
-	// This function is thread-safe.
-	inline bool HasErrorOccurred() { return m_error_occurred; }
+    // Start/stop capturing.
+    // This function is thread-safe.
+    void SetCapturing(bool capturing);
 
-	static bool LaunchApplication(const QString& channel, bool relax_permissions, const QString& command, const QString& working_directory);
+    // Returns whether an error has occurred in the input thread.
+    // This function is thread-safe.
+    inline bool HasErrorOccurred() { return m_error_occurred; }
+
+    static bool LaunchApplication(const QString& channel, bool relax_permissions, const QString& command, const QString& working_directory);
 
 private:
-	void Init();
-	void Free();
+    void Init();
 
-	bool SwitchStream(SharedData* lock, const SSRVideoStream& stream);
+    void Free();
 
-	static void StreamAddCallback(const SSRVideoStream& stream, void* userdata);
-	static void StreamRemoveCallback(const SSRVideoStream& stream, size_t pos, void* userdata);
+    bool SwitchStream(SharedData* lock, const SSRVideoStream& stream);
 
-	void InputThread();
+    static void StreamAddCallback(const SSRVideoStream& stream, void* userdata);
+
+    static void StreamRemoveCallback(const SSRVideoStream& stream, size_t pos, void* userdata);
+
+    void InputThread();
 
 };
