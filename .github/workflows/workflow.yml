@@ -1,0 +1,17 @@
+name: build binaries
+
+on:
+  workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo apt install qtbase5-dev libobs-dev libavformat-dev libswscale-dev build-essential cmake
+      - run: cmake .
+      - run: make -j$(nproc)
+      - uses: actions/upload-artifact@v2
+        with:
+          name: libobs-glcapture
+          path: libobs-glcapture.so
